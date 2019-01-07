@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: SCQUA
+Version: 0.0.1
+Summary: Single-Cell sequencing QUAlity assessment
+Home-page: UNKNOWN
+Author: Chichau Miau
+Author-email: zmiao@ebi.ac.uk
+License: MIT
+Description: This package implements ....
+        
+Platform: UNKNOWN
