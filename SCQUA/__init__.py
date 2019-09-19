@@ -38,7 +38,7 @@ def get_ERCC():
 	return(ercc)
 
 def get_SIRV():
-	sirv = pd.read_csv('https://raw.githubusercontent.com/chichaumiau/SIRV_E2/master/SIRV_concentration.csv', index_col=1)
+	sirv = pd.read_csv('https://raw.githubusercontent.com/chichaumiau/scRNA_metadata/master/SIRV_E2/SIRV_concentration.csv', index_col=1)
 	sirv = np.log(sirv['E2 molarity [fmoles/µl]']*1000)
 	return(sirv)
 
@@ -107,6 +107,33 @@ def get_result(tpm, ercc=None, sirv=None, spike=None):
 		qc_data['n_genes'] = (quant.loc[quant.index.str.startswith("ENS")] > 1.).sum()
 		df[col] = qc_data
 	
+	return(df.T)
+
+ercc = get_ERCC()
+sirv = get_SIRV()
+spike = pd.concat([ercc,sirv])
+
+def get_result_ad(ad, ercc=None, sirv=None, spike=None):
+	df = pd.DataFrame()
+	for id in ad.obs_names:
+		quant = pd.Series(ad[id,:].X, index=ad.var_names)
+		qc_data = pd.Series()
+		if not spike is None:
+			qc_data['detection_limit'] = get_detection_limit(spike, quant)
+			qc_data['accuracy'] = get_accuracy(spike, quant)
+		
+		if not ercc is None:
+			qc_data['detection_limit_ERCC'] = get_detection_limit(ercc, quant)
+			qc_data['accuracy_ERCC'] = get_accuracy(ercc, quant)
+	
+		try:
+			qc_data['ERCC_content'] = quant[ercc.index].sum()
+			quant = quant.drop(ercc[ercc.index.isin(quant.index)].index)
+			quant = quant / quant.sum() * 1e6
+		except ValueError:
+			# ERCCs not present
+			pass
+		df[id] = qc_data
 	return(df.T)
 
 def plot_Fig1D(df1, df2, \
@@ -272,7 +299,7 @@ def fit_sensitivity(df, fun = 'np.log10(detection_limit)',key1 = "detection_limi
 		plt.savefig(save)
 	
 def plot_jitter(df, key1 = "detection_limit", key2 = "lane", ylog = False, xlabel = None, ylabel = None):
-	ax = sns.violinplot(x=key2,y=key1,data=df,inner=None, color=".9")
+	ax = sns.violinplot(x=key2,y=key1,data=df,inner=None, color=".9", cut=0)
 	if ylog: ax.set_yscale("log", nonposy='clip')
 	ax = sns.stripplot(x=key2,y=key1,data=df, jitter=0.3)
 	ax.set_xticklabels(ax.get_xticklabels(),rotation=90)

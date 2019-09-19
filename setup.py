@@ -9,7 +9,7 @@ print(find_packages())
 
 setup(
         name='SCQUA',
-        version='0.0.1',
+        version='0.0.2',
         description='Single-Cell sequencing QUAlity assessment',
         long_description=readme(),
         packages=find_packages(),
