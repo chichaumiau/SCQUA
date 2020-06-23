@@ -13,9 +13,9 @@ All the codes processing these data and making the figures are available in the 
 ## installation
 To install the program please use the codes below:
 
-> git clone https://github.com/chichaumiau/SCQUA.git
-> cd SCQUA
-> python setup.py install
+> git clone https://github.com/chichaumiau/SCQUA.git    
+> cd SCQUA    
+> python setup.py install    
 
 ## usage
 Please refer to the [examples](https://github.com/chichaumiau/SCQUA/tree/master/examples) for details about how to use the program. 
